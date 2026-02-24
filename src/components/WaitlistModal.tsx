@@ -313,17 +313,48 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                             </motion.div>
                                         )}
 
-                                        <div className="flex flex-col gap-3">
+                                        {/* Survey CTA - Only for Users */}
+                                        {userType === 'user' && (
+                                            <motion.div
+                                                initial={{ y: 10, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                transition={{ delay: 0.4 }}
+                                                className="bg-white border-2 border-emerald-100 rounded-[24px] p-6 space-y-4 shadow-lg"
+                                            >
+                                                <div className="flex items-start gap-4">
+                                                    <div className="w-14 h-14 bg-emerald-100 rounded-[20px] flex items-center justify-center shrink-0">
+                                                        <span className="text-2xl">📋</span>
+                                                    </div>
+                                                    <div className="space-y-2 flex-1">
+                                                        <h4 className="text-xl font-black text-premium-black">Help Shape DineInGo!</h4>
+                                                        <p className="text-sm text-premium-black/50 font-medium leading-relaxed">
+                                                            Take our quick 1-2 minute survey. Your feedback helps us enhance DineInGo to better serve you.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <a
+                                                    href="https://tally.so/r/gD0ZLK"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-r from-emerald-500 to-teal-400 text-white rounded-[16px] font-black text-base hover:shadow-xl hover:shadow-emerald-500/30 transition-all"
+                                                >
+                                                    <span>Take Survey Now</span>
+                                                    <ArrowRight className="w-5 h-5" />
+                                                </a>
+                                            </motion.div>
+                                        )}
+
+                                        <div className="flex flex-col gap-4">
                                             <button
                                                 onClick={() => setShowDashboard(true)}
-                                                className="flex items-center justify-center gap-2 py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all"
+                                                className="w-full flex items-center justify-center gap-3 py-5 bg-emerald-500 text-white rounded-[20px] font-black text-base shadow-xl shadow-emerald-500/20 hover:bg-emerald-600 hover:shadow-2xl hover:shadow-emerald-500/30 transition-all"
                                             >
-                                                <BarChart3 className="w-4 h-4" />
+                                                <BarChart3 className="w-5 h-5" />
                                                 View Your Stomp Stats
                                             </button>
                                             <button
                                                 onClick={handleClose}
-                                                className="inline-flex items-center gap-2 font-black text-premium-black/40 hover:text-premium-black transition-colors text-sm"
+                                                className="inline-flex items-center justify-center gap-2 font-bold text-premium-black/40 hover:text-premium-black transition-colors text-sm"
                                             >
                                                 Back to Landing <ArrowRight className="w-4 h-4" />
                                             </button>

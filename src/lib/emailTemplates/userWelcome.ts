@@ -138,6 +138,26 @@ export function getUserWelcomeEmail(referralCode: string, position?: number, bas
             </td>
           </tr>
 
+          <!-- Survey Section -->
+          <tr>
+            <td style="background:#0d0d0d;padding:32px 40px;">
+              <div style="background:linear-gradient(135deg,#0d9488,#059669);border-radius:24px;padding:32px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:16px;">📋</div>
+                <h3 style="color:#ffffff;font-size:24px;font-weight:900;margin:0 0 12px;">Help Shape DineInGo!</h3>
+                <p style="color:#d1fae5;font-size:15px;margin:0 0 20px;line-height:1.6;">
+                  Take our quick 1-2 minute survey and share your thoughts.<br/>
+                  <strong style="color:#ffffff;">Your feedback helps us enhance DineInGo to better serve you.</strong>
+                </p>
+                <a href="https://tally.so/r/gD0ZLK" style="display:inline-block;background:#ffffff;color:#047857;font-size:15px;font-weight:800;padding:14px 32px;border-radius:100px;text-decoration:none;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(0,0,0,0.15);">
+                  Take Survey Now →
+                </a>
+                <p style="color:#a7f3d0;font-size:12px;margin:16px 0 0;font-weight:600;">
+                  Your input shapes the future of dining experiences
+                </p>
+              </div>
+            </td>
+          </tr>
+
           <!-- Footer -->
           <tr>
             <td style="background:#050505;border-radius:0 0 24px 24px;padding:28px 40px;text-align:center;">

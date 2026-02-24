@@ -708,21 +708,34 @@ export default function Home() {
                 Check your position and referral stats
               </p>
             </div>
-            <motion.button
-              onClick={() => {
-                const code = prompt("Enter your referral code to view your stats:");
-                if (code && code.trim()) {
-                  setStatsReferralCode(code.trim().toUpperCase());
-                  setShowStatsModal(true);
-                }
-              }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="px-10 py-5 bg-emerald-500 text-white rounded-full font-black text-lg shadow-xl shadow-emerald-500/20 flex items-center gap-3 mx-auto hover:bg-emerald-600 transition-all"
-            >
-              <BarChart3 className="w-5 h-5" />
-              View My Stats
-            </motion.button>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <motion.button
+                onClick={() => {
+                  const code = prompt("Enter your referral code to view your stats:");
+                  if (code && code.trim()) {
+                    setStatsReferralCode(code.trim().toUpperCase());
+                    setShowStatsModal(true);
+                  }
+                }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-5 bg-emerald-500 text-white rounded-full font-black text-lg shadow-xl shadow-emerald-500/20 flex items-center gap-3 hover:bg-emerald-600 transition-all"
+              >
+                <BarChart3 className="w-5 h-5" />
+                View My Stats
+              </motion.button>
+              
+              <motion.a
+                href="https://tally.so/r/gD0ZLK"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="px-10 py-5 bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-full font-black text-lg shadow-xl shadow-teal-500/20 flex items-center gap-3 hover:shadow-2xl hover:shadow-teal-500/30 transition-all"
+              >
+                📋 Quick Survey
+              </motion.a>
+            </div>
           </SectionReveal>
         </div>
       </section>
