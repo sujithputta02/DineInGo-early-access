@@ -12,7 +12,12 @@ export const metadata: Metadata = {
   title: "DineInGo - Early Access",
   description: "Join the DineInGo early access list. The AI-powered dining platform for foodies and venues.",
   icons: {
-    icon: "/images/DineInGo Logo.png",
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+      { url: "/images/DineInGo Logo.png", type: "image/png" },
+    ],
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
   },
 };
 
@@ -23,6 +28,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="shortcut icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/favicon.png" />
+      </head>
       <body
         className={`${outfit.variable} antialiased font-sans`}
       >
