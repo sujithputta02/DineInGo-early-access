@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Users, Building2, Send, CheckCircle2, ArrowRight, Copy, Check, Share2 } from 'lucide-react';
+import { X, Users, Building2, Send, CheckCircle2, ArrowRight, Copy, Check, Share2, BarChart3 } from 'lucide-react';
+import ReferralDashboard from './ReferralDashboard';
 
 interface WaitlistModalProps {
     isOpen: boolean;
@@ -21,6 +22,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     const [inboundRef, setInboundRef] = useState('');    // Code they came in with
     const [copied, setCopied] = useState(false);
     const [isSharing, setIsSharing] = useState(false);
+    const [showDashboard, setShowDashboard] = useState(false);
 
     // Read ?ref= from URL on mount
     useEffect(() => {
@@ -99,7 +101,8 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
     };
 
     return (
-        <AnimatePresence>
+        <>
+            <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
                     {/* Backdrop */}
@@ -287,7 +290,7 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                                         {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                                                         {copied ? 'Copied!' : 'Copy Link'}
                                                     </button>
-                                                    {navigator.share && (
+                                                    {typeof navigator !== 'undefined' && navigator.share && (
                                                         <button
                                                             onClick={async () => {
                                                                 if (isSharing) return;
@@ -310,12 +313,21 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                                             </motion.div>
                                         )}
 
-                                        <button
-                                            onClick={handleClose}
-                                            className="inline-flex items-center gap-2 font-black text-premium-black/40 hover:text-premium-black transition-colors text-sm"
-                                        >
-                                            Back to Landing <ArrowRight className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex flex-col gap-3">
+                                            <button
+                                                onClick={() => setShowDashboard(true)}
+                                                className="flex items-center justify-center gap-2 py-3 bg-emerald-500 text-white rounded-xl font-bold text-sm hover:bg-emerald-600 transition-all"
+                                            >
+                                                <BarChart3 className="w-4 h-4" />
+                                                View Your Stomp Stats
+                                            </button>
+                                            <button
+                                                onClick={handleClose}
+                                                className="inline-flex items-center gap-2 font-black text-premium-black/40 hover:text-premium-black transition-colors text-sm"
+                                            >
+                                                Back to Landing <ArrowRight className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -324,6 +336,16 @@ const WaitlistModal: React.FC<WaitlistModalProps> = ({ isOpen, onClose }) => {
                 </div>
             )}
         </AnimatePresence>
+
+            {/* Referral Dashboard */}
+            {referralCode && (
+                <ReferralDashboard
+                    isOpen={showDashboard}
+                    onClose={() => setShowDashboard(false)}
+                    referralCode={referralCode}
+                />
+            )}
+        </>
     );
 };
 

@@ -2,9 +2,10 @@
 
 import { motion, useMotionValue, useSpring, useTransform, AnimatePresence, useScroll } from "framer-motion";
 import Image from "next/image";
-import { ArrowRight, CheckCircle2, Play, Users, Building2, HelpCircle, ChevronDown, Instagram, Twitter, Linkedin, Globe, Zap, ShieldCheck, Search, Calendar, Bell, Star, Layers, Theater, X } from "lucide-react";
+import { ArrowRight, CheckCircle2, Play, Users, Building2, HelpCircle, ChevronDown, Instagram, Twitter, Linkedin, Globe, Zap, ShieldCheck, Search, Calendar, Bell, Star, Layers, Theater, X, BarChart3 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import WaitlistModal from "../components/WaitlistModal";
+import ReferralDashboard from "../components/ReferralDashboard";
 
 // --- Components ---
 
@@ -254,6 +255,8 @@ export default function Home() {
   const springX = useSpring(mouseX, { stiffness: 100, damping: 20 });
   const springY = useSpring(mouseY, { stiffness: 100, damping: 20 });
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false);
+  const [showStatsModal, setShowStatsModal] = useState(false);
+  const [statsReferralCode, setStatsReferralCode] = useState('');
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -402,7 +405,7 @@ export default function Home() {
               </h2>
             </div>
             <p className="text-xl md:text-2xl text-premium-black/60 font-medium leading-relaxed max-w-2xl mx-auto px-4">
-              Discover, book, and experience venues in a whole new dimension. Our AI curators your perfect night out.
+              Discover, book, and experience restaurants & events in a whole new dimension. From intimate dinners to massive concerts — our AI curates your perfect experience.
             </p>
           </SectionReveal>
         </div>
@@ -418,9 +421,9 @@ export default function Home() {
         ]} speed={50} />
 
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-8 py-20 relative z-10">
-          <FeatureCard icon={Search} title="Smart Discover" desc="AI-powered search that understands your mood and preferences." color="emerald" />
-          <FeatureCard icon={Calendar} title="3D Booking" desc="Visualize your table or spot in full 3D before you confirm." color="emerald" />
-          <FeatureCard icon={Bell} title="Live Table" desc="Get real-time updates and exclusive offers at your fingertips." color="emerald" />
+          <FeatureCard icon={Search} title="Smart Discover" desc="AI-powered search for restaurants, concerts, festivals & outdoor events." color="emerald" />
+          <FeatureCard icon={Calendar} title="3D Booking" desc="Visualize your table or event seat in full 3D before you confirm." color="emerald" />
+          <FeatureCard icon={Bell} title="Live Updates" desc="Real-time notifications for reservations, event changes & exclusive offers." color="emerald" />
         </div>
 
         <WaveDivider fill="#ffffff" />
@@ -608,7 +611,7 @@ export default function Home() {
               </h2>
             </div>
             <p className="text-2xl text-premium-black/50 font-medium leading-relaxed max-w-2xl mx-auto">
-              The merchant operating system that turns casual guests into loyal regulars. Manage floor in 3D.
+              The merchant operating system for restaurants & event venues. Manage dining floors, concert seating, and festival layouts — all in 3D.
             </p>
           </SectionReveal>
         </div>
@@ -623,9 +626,9 @@ export default function Home() {
         ]} speed={60} direction="right" />
 
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 py-20 relative z-10">
-          <FeatureCard icon={Layers} title="3D Floor Plans" desc="Design and manage your venue floor plan in an interactive 3D editor." color="gold" />
-          <FeatureCard icon={Theater} title="Event Seating" desc="Complex seating charts and ticket tier management for festivals and shows." color="gold" />
-          <FeatureCard icon={ShieldCheck} title="Revenue Shield" desc="Protect against no-shows with smart booking deposits and reminders." color="gold" />
+          <FeatureCard icon={Layers} title="3D Floor Plans" desc="Design restaurant floors and event venues in an interactive 3D editor." color="gold" />
+          <FeatureCard icon={Theater} title="Event Seating" desc="Manage complex seating for concerts, festivals, and outdoor events with ease." color="gold" />
+          <FeatureCard icon={ShieldCheck} title="Revenue Shield" desc="Protect against no-shows with smart deposits for both dining and events." color="gold" />
         </div>
 
         <WaveDivider fill="#1a1a2e" />
@@ -651,7 +654,7 @@ export default function Home() {
               </h2>
             </div>
             <p className="text-xl md:text-2xl text-white/40 leading-relaxed font-medium max-w-xl">
-              We've built an ecosystem that bridges the gap between premium hospitality and the modern digital native. Connect with ease.
+              We've built an ecosystem that bridges premium hospitality, live events, and the modern digital native. From intimate dinners to massive festivals — all connected seamlessly.
             </p>
           </SectionReveal>
           <div className="relative flex justify-center mt-16 lg:mt-0">
@@ -693,12 +696,43 @@ export default function Home() {
         <WaveDivider fill="#ffffff" />
       </section>
 
+      {/* 6.5 VIEW STATS CTA */}
+      <section className="w-full bg-white py-20 md:py-32 relative">
+        <div className="max-w-4xl mx-auto px-6">
+          <SectionReveal className="text-center space-y-8">
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-6xl font-black text-premium-black tracking-tight">
+                Already on the list?
+              </h2>
+              <p className="text-xl text-premium-black/50 font-medium">
+                Check your position and referral stats
+              </p>
+            </div>
+            <motion.button
+              onClick={() => {
+                const code = prompt("Enter your referral code to view your stats:");
+                if (code && code.trim()) {
+                  setStatsReferralCode(code.trim().toUpperCase());
+                  setShowStatsModal(true);
+                }
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="px-10 py-5 bg-emerald-500 text-white rounded-full font-black text-lg shadow-xl shadow-emerald-500/20 flex items-center gap-3 mx-auto hover:bg-emerald-600 transition-all"
+            >
+              <BarChart3 className="w-5 h-5" />
+              View My Stats
+            </motion.button>
+          </SectionReveal>
+        </div>
+      </section>
+
       {/* 7. FOOTER */}
       <footer className="w-full bg-white pt-24 pb-12 relative z-30">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16 mb-24">
           <div className="col-span-1 md:col-span-2 space-y-8">
             <h3 className="text-3xl font-black text-premium-black">DineInGo<span className="text-gold">.</span></h3>
-            <p className="text-premium-black/40 max-w-sm text-lg font-medium">The zero-friction ecosystem for the future of dining and event reservations.</p>
+            <p className="text-premium-black/40 max-w-sm text-lg font-medium">The zero-friction ecosystem for restaurants, concerts, festivals & outdoor events — all in one platform.</p>
             <div className="flex items-center gap-6">
               {[Instagram, Twitter, Linkedin].map((Icon, i) => (
                 <button key={i} className="w-12 h-12 rounded-full bg-premium-black/5 flex items-center justify-center hover:bg-[#00F29D] hover:text-white transition-all duration-300">
@@ -736,6 +770,15 @@ export default function Home() {
       </AnimatePresence>
 
       <WaitlistModal isOpen={isWaitlistOpen} onClose={() => setIsWaitlistOpen(false)} />
+      
+      <ReferralDashboard 
+        isOpen={showStatsModal} 
+        onClose={() => {
+          setShowStatsModal(false);
+          setStatsReferralCode('');
+        }} 
+        referralCode={statsReferralCode} 
+      />
     </div >
   );
 }

@@ -25,6 +25,59 @@ function generateReferralCode(): string {
     return code;
 }
 
+// Calculate tier based on referral count
+function calculateTier(referralCount: number): 'bronze' | 'silver' | 'gold' | 'platinum' {
+    if (referralCount >= 20) return 'platinum';
+    if (referralCount >= 10) return 'gold';
+    if (referralCount >= 5) return 'silver';
+    return 'bronze';
+}
+
+// Calculate tier boost points
+function getTierBoost(tier: string): number {
+    switch (tier) {
+        case 'platinum': return 100;
+        case 'gold': return 50;
+        case 'silver': return 25;
+        case 'bronze': return 10;
+        default: return 0;
+    }
+}
+
+// Update referrer's stats when someone uses their code
+async function updateReferrerStats(referralCode: string) {
+    try {
+        const referrer = await EarlyAccess.findOne({ referralCode });
+        if (!referrer) return;
+
+        // Update referral count
+        const newReferralCount = (referrer.referralCount || 0) + 1;
+        
+        // Calculate new tier
+        const newTier = calculateTier(newReferralCount);
+        
+        // Calculate new priority score
+        const tierBoost = getTierBoost(newTier);
+        const continuousBonus = newReferralCount * 2; // +2 points per referral
+        const newPriorityScore = referrer.originalPosition - tierBoost - continuousBonus;
+
+        // Update referrer
+        await EarlyAccess.updateOne(
+            { referralCode },
+            {
+                referralCount: newReferralCount,
+                tier: newTier,
+                priorityScore: newPriorityScore,
+                lastReferralAt: new Date()
+            }
+        );
+
+        console.log(`✅ Updated referrer ${referralCode}: ${newReferralCount} refs → ${newTier} tier → priority: ${newPriorityScore}`);
+    } catch (error) {
+        console.error('❌ Error updating referrer stats:', error);
+    }
+}
+
 // Mark this route as dynamic to prevent static generation at build time
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -88,13 +141,25 @@ export async function POST(req: NextRequest) {
         // Get position (count of same userType before this one)
         const position = (await EarlyAccess.countDocuments({ userType })) + 1;
 
+        // Calculate initial priority score (just position for now)
+        const priorityScore = position;
+
         // Save to DB
         await EarlyAccess.create({
             email: email.toLowerCase().trim(),
             userType,
             referralCode,
             referredBy,
+            originalPosition: position,
+            priorityScore,
+            tier: 'bronze',
+            referralCount: 0,
         });
+
+        // If this person was referred, update the referrer's stats
+        if (referredBy) {
+            await updateReferrerStats(referredBy);
+        }
 
         console.log(`✅ Saved to DB: ${email} (${userType}) | code: ${referralCode} | position: #${position}`);
 
