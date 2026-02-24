@@ -9,7 +9,7 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "DineInGo — Early Access",
+  title: "DineInGo - Early Access",
   description: "Join the DineInGo early access list. The AI-powered dining platform for foodies and venues.",
   icons: {
     icon: "/images/DineInGo Logo.png",
