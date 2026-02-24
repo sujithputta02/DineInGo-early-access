@@ -1,0 +1,9 @@
+# Files to ignore during Vercel deployment
+.env.local
+.env
+*.log
+.DS_Store
+README.md
+DEPLOYMENT.md
+User Ui/
+Business UI/
