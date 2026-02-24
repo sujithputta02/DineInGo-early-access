@@ -33,6 +33,8 @@ export async function POST(req: NextRequest) {
     try {
         const { email, userType, referralCode: usedCode } = await req.json();
 
+        console.log('📥 Signup request:', { email, userType, usedCode });
+
         if (!email || !['user', 'business'].includes(userType)) {
             return NextResponse.json(
                 { success: false, message: 'Valid email and userType are required.' },
@@ -40,11 +42,14 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        console.log('🔌 Connecting to database...');
         await connectDB();
+        console.log('✅ Database connected');
 
         // Check for duplicate — same email + same userType
         const existing = await EarlyAccess.findOne({ email: email.toLowerCase(), userType });
         if (existing) {
+            console.log('⚠️ Duplicate signup:', email);
             return NextResponse.json({
                 success: true,
                 message: "You're already on the list! Dino is guarding your spot 🦖",
@@ -64,11 +69,14 @@ export async function POST(req: NextRequest) {
         }
 
         if (!referralCode) {
+            console.error('❌ Could not generate unique referral code');
             return NextResponse.json(
                 { success: false, message: 'Could not generate a unique code. Please try again.' },
                 { status: 500 }
             );
         }
+
+        console.log('🎫 Generated referral code:', referralCode);
 
         // Validate the referredBy code exists (if provided)
         let referredBy: string | null = null;
@@ -88,13 +96,14 @@ export async function POST(req: NextRequest) {
             referredBy,
         });
 
-        console.log(`✅ New signup: ${email} (${userType}) | code: ${referralCode} | ref: ${referredBy ?? 'direct'} | position: #${position}`);
+        console.log(`✅ Saved to DB: ${email} (${userType}) | code: ${referralCode} | position: #${position}`);
 
         // Get base URL from environment (works with or without domain)
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:6173';
 
         // Send welcome email — separate template per userType
         try {
+            console.log('📧 Sending email to:', email);
             if (userType === 'user') {
                 await sendEmail(
                     email,
@@ -108,16 +117,21 @@ export async function POST(req: NextRequest) {
                     getBusinessWelcomeEmail(referralCode, position, baseUrl)
                 );
             }
-            console.log(`📧 Welcome email sent to ${email} (${userType})`);
-        } catch (emailError) {
+            console.log(`✅ Email sent successfully to ${email}`);
+        } catch (emailError: any) {
             // Don't fail the signup if email fails — log and continue
-            console.error('⚠️ Email send failed (signup still succeeded):', emailError);
+            console.error('⚠️ Email send failed (signup still succeeded):', emailError?.message || emailError);
         }
 
         return NextResponse.json({ success: true, referralCode }, { status: 201 });
 
-    } catch (error) {
-        console.error('Early access join error:', error);
+    } catch (error: any) {
+        console.error('❌ Early access join error:', error);
+        console.error('Error details:', {
+            message: error?.message,
+            stack: error?.stack,
+            name: error?.name
+        });
         return NextResponse.json(
             { success: false, message: 'Server error. Please try again.' },
             { status: 500 }
