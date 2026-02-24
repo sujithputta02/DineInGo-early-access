@@ -25,14 +25,14 @@ export function getUserWelcomeEmail(referralCode: string, position?: number, bas
           <!-- Header Card -->
           <tr>
             <td style="background:linear-gradient(135deg,#064e3b 0%,#065f46 50%,#047857 100%);border-radius:24px 24px 0 0;padding:48px 40px 32px;text-align:center;">
-              <!-- DineInGo Logo -->
-              <div style="margin-bottom:24px;">
-                <img src="${siteUrl}/images/DineInGo Logo.png" alt="DineInGo" style="height:60px;width:auto;display:inline-block;" />
+              <!-- DineInGo Logo Text -->
+              <div style="margin-bottom:20px;">
+                <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:42px;font-weight:900;letter-spacing:-1px;color:#ffffff;">
+                  DineIn<span style="color:#34d399;">Go</span>
+                </div>
               </div>
-              <!-- Dino Icon -->
-              <div style="margin-bottom:16px;">
-                <img src="${siteUrl}/images/Dino Icon.svg" alt="Dino" style="height:80px;width:auto;display:inline-block;" />
-              </div>
+              <!-- Dino Emoji -->
+              <div style="font-size:72px;line-height:1;margin-bottom:16px;">🦖</div>
               <p style="color:#6ee7b7;font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;margin:0 0 16px;">DineInGo Early Access</p>
               <h1 style="color:#ffffff;font-size:40px;font-weight:900;margin:0 0 8px;line-height:1.1;">
                 You're In, <span style="color:#34d399;">Foodie!</span> 🎉

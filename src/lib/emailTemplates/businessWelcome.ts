@@ -29,15 +29,17 @@ export function getBusinessWelcomeEmail(referralCode: string, position?: number,
               <div style="margin-bottom:24px;">
                 <div style="display:inline-block;">
                   <!-- DineInGo Text -->
-                  <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:48px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;">
-                    <span style="color:#ffffff;">D</span><span style="color:#ffffff;position:relative;display:inline-block;">i<span style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:8px;height:8px;background-color:#ef4444;border-radius:50%;"></span></span><span style="color:#ffffff;">ne</span><span style="color:#ffffff;">I</span><span style="color:#ffffff;">n</span><span style="color:#fbbf24;">G</span><span style="color:#fbbf24;">o</span>
+                  <div style="font-family:'Segoe UI',Arial,sans-serif;font-size:42px;font-weight:900;letter-spacing:-1px;margin-bottom:8px;">
+                    <span style="color:#ffffff;">DineIn</span><span style="color:#fbbf24;">Go</span>
                   </div>
                   <!-- BUSINESS Text -->
-                  <div style="font-size:14px;font-weight:700;letter-spacing:0.3em;color:#00F29D;font-family:'Poppins',Arial,sans-serif;">
+                  <div style="font-size:13px;font-weight:700;letter-spacing:0.3em;color:#00F29D;font-family:'Poppins',Arial,sans-serif;">
                     BUSINESS
                   </div>
                 </div>
               </div>
+              <!-- Business Icon -->
+              <div style="font-size:64px;margin-bottom:16px;line-height:1;">🏛️</div>
               <p style="color:#fcd34d;font-size:11px;font-weight:800;letter-spacing:4px;text-transform:uppercase;margin:0 0 16px;">DineInGo · Venue Partner Program</p>
               <h1 style="color:#ffffff;font-size:40px;font-weight:900;margin:0 0 8px;line-height:1.1;">
                 Your Venue is <span style="color:#fbbf24;">Reserved!</span> 🎊
