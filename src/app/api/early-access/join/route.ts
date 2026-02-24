@@ -25,6 +25,10 @@ function generateReferralCode(): string {
     return code;
 }
 
+// Mark this route as dynamic to prevent static generation at build time
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(req: NextRequest) {
     try {
         const { email, userType, referralCode: usedCode } = await req.json();
