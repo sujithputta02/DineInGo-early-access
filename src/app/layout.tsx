@@ -12,6 +12,15 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "DineInGo - Early Access",
   description: "Join the DineInGo early access list. The AI-powered dining platform for foodies and venues.",
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png', sizes: '1188x1188' },
+      { url: '/favicon.ico', sizes: 'any' }
+    ],
+    apple: [
+      { url: '/apple-icon.png', type: 'image/png', sizes: '1188x1188' }
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -21,6 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/icon.png?v=2" type="image/png" sizes="1188x1188" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
+        <link rel="apple-touch-icon" href="/apple-icon.png?v=2" />
+      </head>
       <body
         className={`${outfit.variable} antialiased font-sans`}
       >
