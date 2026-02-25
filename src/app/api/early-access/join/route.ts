@@ -168,25 +168,51 @@ export async function POST(req: NextRequest) {
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:6173';
 
         // Send welcome email — separate template per userType
-        try {
-            console.log('📧 Sending email to:', email);
-            if (userType === 'user') {
-                await sendEmail(
-                    email,
-                    `🦖 You're on the DineInGo List! Your code: ${referralCode}`,
-                    getUserWelcomeEmail(referralCode, position, baseUrl)
-                );
-            } else {
-                await sendEmail(
-                    email,
-                    `🏛️ Your Venue is Reserved on DineInGo! Code: ${referralCode}`,
-                    getBusinessWelcomeEmail(referralCode, position, baseUrl)
-                );
+        // Retry logic for better deliverability
+        let emailSent = false;
+        let emailAttempts = 0;
+        const maxEmailAttempts = 3;
+
+        while (!emailSent && emailAttempts < maxEmailAttempts) {
+            emailAttempts++;
+            try {
+                console.log(`📧 Sending email to: ${email} (attempt ${emailAttempts}/${maxEmailAttempts})`);
+                
+                if (userType === 'user') {
+                    await sendEmail(
+                        email,
+                        `🦖 You're on the DineInGo List! Your code: ${referralCode}`,
+                        getUserWelcomeEmail(referralCode, position, baseUrl)
+                    );
+                } else {
+                    await sendEmail(
+                        email,
+                        `🏛️ Your Venue is Reserved on DineInGo! Code: ${referralCode}`,
+                        getBusinessWelcomeEmail(referralCode, position, baseUrl)
+                    );
+                }
+                
+                emailSent = true;
+                console.log(`✅ Email sent successfully to ${email} on attempt ${emailAttempts}`);
+            } catch (emailError: any) {
+                console.error(`⚠️ Email send failed (attempt ${emailAttempts}/${maxEmailAttempts}):`, {
+                    message: emailError?.message,
+                    code: emailError?.code,
+                    command: emailError?.command,
+                    response: emailError?.response
+                });
+                
+                // Wait before retry (exponential backoff)
+                if (emailAttempts < maxEmailAttempts) {
+                    const waitTime = Math.pow(2, emailAttempts) * 1000; // 2s, 4s, 8s
+                    console.log(`⏳ Waiting ${waitTime}ms before retry...`);
+                    await new Promise(resolve => setTimeout(resolve, waitTime));
+                }
             }
-            console.log(`✅ Email sent successfully to ${email}`);
-        } catch (emailError: any) {
-            // Don't fail the signup if email fails — log and continue
-            console.error('⚠️ Email send failed (signup still succeeded):', emailError?.message || emailError);
+        }
+
+        if (!emailSent) {
+            console.error(`❌ Failed to send email to ${email} after ${maxEmailAttempts} attempts (signup still succeeded)`);
         }
 
         return NextResponse.json({ success: true, referralCode }, { status: 201 });
