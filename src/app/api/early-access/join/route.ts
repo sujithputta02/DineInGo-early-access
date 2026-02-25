@@ -132,11 +132,20 @@ export async function POST(req: NextRequest) {
 
         console.log('🎫 Generated referral code:', referralCode);
 
-        // Validate the referredBy code exists (if provided)
+        // Validate the referredBy code exists (if provided) and prevent self-referral
         let referredBy: string | null = null;
         if (usedCode) {
             const referrer = await EarlyAccess.findOne({ referralCode: usedCode.toUpperCase() });
-            if (referrer) referredBy = usedCode.toUpperCase();
+            
+            // Check if referrer exists and is not the same email (prevent self-referral)
+            if (referrer && referrer.email.toLowerCase() !== email.toLowerCase()) {
+                referredBy = usedCode.toUpperCase();
+                console.log(`✅ Valid referral code from: ${referrer.email}`);
+            } else if (referrer && referrer.email.toLowerCase() === email.toLowerCase()) {
+                console.log(`⚠️ Self-referral attempt blocked: ${email}`);
+            } else {
+                console.log(`⚠️ Invalid referral code: ${usedCode}`);
+            }
         }
 
         // Get position (count of same userType before this one)
