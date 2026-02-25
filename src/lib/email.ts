@@ -1,51 +1,63 @@
-import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
 /**
- * Send email with Resend (primary) and Gmail SMTP fallback
- * Strategy: Try Resend first for best deliverability, fallback to Gmail SMTP if Resend fails
+ * Send email with Brevo (primary) and Gmail SMTP fallback
+ * Strategy: Try Brevo first for best deliverability, fallback to Gmail SMTP if it fails
  */
 export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
-    // Try Resend first (primary method - best deliverability)
-    const resendApiKey = process.env.RESEND_API_KEY;
+    // Try Brevo first (primary method - best deliverability)
+    const brevoApiKey = process.env.BREVO_API_KEY;
     
-    if (resendApiKey) {
+    if (brevoApiKey) {
         try {
-            console.log('📧 Attempting to send via Resend...');
-            console.log('🔑 Resend API Key present:', resendApiKey ? 'Yes' : 'No');
+            console.log('📧 Attempting to send via Brevo...');
             
-            // Initialize Resend client at runtime to ensure env vars are loaded
-            const resend = new Resend(resendApiKey);
-            
-            const { data, error } = await resend.emails.send({
-                from: process.env.RESEND_FROM || 'DineInGo 🦖 <onboarding@resend.dev>',
-                to: [to],
-                subject,
-                html,
+            // Use Brevo's REST API directly (no package needed)
+            const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+                method: 'POST',
+                headers: {
+                    'accept': 'application/json',
+                    'api-key': brevoApiKey,
+                    'content-type': 'application/json',
+                },
+                body: JSON.stringify({
+                    sender: {
+                        name: 'DineInGo 🦖',
+                        email: process.env.BREVO_FROM || 'sec.dinelngo.team@gmail.com',
+                    },
+                    to: [{ email: to }],
+                    subject,
+                    htmlContent: html,
+                }),
             });
 
-            if (error) {
-                console.error('⚠️ Resend error:', error);
-                throw new Error(`Resend failed: ${error.message}`);
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(`Brevo API error: ${JSON.stringify(error)}`);
             }
 
-            console.log('✅ Email sent via Resend:', {
-                id: data?.id,
+            const data = await response.json();
+            console.log('✅ Email sent via Brevo:', {
+                messageId: data.messageId,
                 to
             });
             return; // Success! Exit function
-        } catch (resendError: any) {
-            console.error('❌ Resend failed, trying Gmail SMTP fallback...', {
-                message: resendError?.message,
-                name: resendError?.name
+        } catch (brevoError: any) {
+            console.error('❌ Brevo failed, trying Gmail SMTP fallback...', {
+                message: brevoError?.message,
+                name: brevoError?.name
             });
             // Continue to fallback
         }
     } else {
-        console.log('⚠️ No Resend API key found, using Gmail SMTP...');
+        console.log('⚠️ No Brevo API key, using Gmail SMTP...');
     }
 
     // Fallback to Gmail SMTP
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+        throw new Error('Both Brevo and Gmail SMTP failed - no Gmail credentials configured');
+    }
+
     try {
         console.log('📧 Attempting to send via Gmail SMTP...');
         
@@ -95,6 +107,6 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
             code: smtpError?.code,
             response: smtpError?.response
         });
-        throw new Error('Both Resend and Gmail SMTP failed to send email');
+        throw new Error('Both Brevo and Gmail SMTP failed to send email');
     }
 }
