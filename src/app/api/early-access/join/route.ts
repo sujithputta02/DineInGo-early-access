@@ -56,10 +56,11 @@ async function updateReferrerStats(referralCode: string) {
         // Calculate new tier
         const newTier = calculateTier(newReferralCount);
         
-        // Calculate new priority score
+        // Calculate new priority score (HIGHER is better)
+        // Priority Score = Tier Boost + Continuous Bonus
         const tierBoost = getTierBoost(newTier);
         const continuousBonus = newReferralCount * 2; // +2 points per referral
-        const newPriorityScore = referrer.originalPosition - tierBoost - continuousBonus;
+        const newPriorityScore = tierBoost + continuousBonus;
 
         // Update referrer
         await EarlyAccess.updateOne(
@@ -141,8 +142,8 @@ export async function POST(req: NextRequest) {
         // Get position (count of same userType before this one)
         const position = (await EarlyAccess.countDocuments({ userType })) + 1;
 
-        // Calculate initial priority score (just position for now)
-        const priorityScore = position;
+        // Calculate initial priority score (0 for new users, will increase with referrals)
+        const priorityScore = 0;
 
         // Save to DB
         await EarlyAccess.create({

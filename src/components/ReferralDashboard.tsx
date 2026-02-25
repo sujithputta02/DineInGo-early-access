@@ -322,7 +322,13 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                                     <span className="text-sm text-premium-black/40">Last Referral</span>
                                                     <span className="font-bold text-premium-black">
                                                         {stats.lastReferralAt 
-                                                            ? new Date(stats.lastReferralAt).toLocaleDateString()
+                                                            ? new Date(stats.lastReferralAt).toLocaleDateString('en-US', {
+                                                                month: 'short',
+                                                                day: 'numeric',
+                                                                year: 'numeric',
+                                                                hour: '2-digit',
+                                                                minute: '2-digit'
+                                                            })
                                                             : 'None yet'
                                                         }
                                                     </span>
