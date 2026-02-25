@@ -303,16 +303,16 @@ export default function Home() {
             <div className="flex items-center select-none group mb-4">
               <h1 className="font-black flex items-center m-0 leading-none" style={{ fontSize: "clamp(3rem, 15vw, 6.5rem)", letterSpacing: "0.02em", textShadow: "0 20px 40px rgba(0,0,0,0.05)" }}>
                 <span className="text-premium-black tracking-tight">D</span>
-                <span className="text-premium-black relative">
+                <span className="text-premium-black relative inline-block">
                   i
                   <span
                     className="absolute bg-red-500 rounded-full"
                     style={{
-                      top: "10%",
-                      left: "45%",
+                      top: "0.1em",
+                      left: "44.5%",
                       transform: "translateX(-50%)",
-                      width: "clamp(8px, 3vw, 20px)",
-                      height: "clamp(8px, 3vw, 20px)",
+                      width: "0.20em",
+                      height: "0.20em",
                       boxShadow: "0 0 15px rgba(255, 0, 0, 0.2)"
                     }}
                   />
