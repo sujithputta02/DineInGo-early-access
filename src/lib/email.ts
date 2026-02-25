@@ -1,18 +1,21 @@
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 /**
  * Send email with Resend (primary) and Gmail SMTP fallback
  * Strategy: Try Resend first for best deliverability, fallback to Gmail SMTP if Resend fails
  */
 export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
     // Try Resend first (primary method - best deliverability)
-    if (process.env.RESEND_API_KEY) {
+    const resendApiKey = process.env.RESEND_API_KEY;
+    
+    if (resendApiKey) {
         try {
             console.log('📧 Attempting to send via Resend...');
+            console.log('🔑 Resend API Key present:', resendApiKey ? 'Yes' : 'No');
+            
+            // Initialize Resend client at runtime to ensure env vars are loaded
+            const resend = new Resend(resendApiKey);
             
             const { data, error } = await resend.emails.send({
                 from: process.env.RESEND_FROM || 'DineInGo 🦖 <onboarding@resend.dev>',
@@ -39,7 +42,7 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
             // Continue to fallback
         }
     } else {
-        console.log('⚠️ No Resend API key, using Gmail SMTP...');
+        console.log('⚠️ No Resend API key found, using Gmail SMTP...');
     }
 
     // Fallback to Gmail SMTP
