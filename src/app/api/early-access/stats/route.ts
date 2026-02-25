@@ -122,17 +122,43 @@ export async function GET(req: NextRequest) {
             );
         }
 
-        // Get tier details
-        const tierDetails = getTierDetails(user.tier);
+        // Calculate REAL referral count dynamically (counts actual users who used this code)
+        const actualReferralCount = await EarlyAccess.countDocuments({ 
+            referredBy: user.referralCode 
+        });
+
+        // Recalculate tier based on actual count
+        const actualTier = calculateTier(actualReferralCount);
         
-        // Calculate progress to next tier
+        // Recalculate priority score based on actual count
+        const tierBoost = getTierBoost(actualTier);
+        const continuousBonus = actualReferralCount * 2;
+        const actualPriorityScore = tierBoost + continuousBonus;
+
+        // Update user if counts are different (sync database with reality)
+        if (actualReferralCount !== user.referralCount || actualTier !== user.tier || actualPriorityScore !== user.priorityScore) {
+            await EarlyAccess.updateOne(
+                { referralCode },
+                {
+                    referralCount: actualReferralCount,
+                    tier: actualTier,
+                    priorityScore: actualPriorityScore
+                }
+            );
+            console.log(`🔄 Synced stats for ${user.email}: ${actualReferralCount} refs, ${actualTier} tier, ${actualPriorityScore} priority`);
+        }
+
+        // Get tier details based on actual tier
+        const tierDetails = getTierDetails(actualTier);
+        
+        // Calculate progress to next tier (using actual count)
         let progress = 0;
         let referralsToNextTier = 0;
         let targetScore = 0; // Score needed to reach next tier
         
         if (tierDetails.nextTier) {
-            referralsToNextTier = tierDetails.referralsNeeded - user.referralCount;
-            progress = Math.min(100, Math.max(0, (user.referralCount / tierDetails.referralsNeeded) * 100));
+            referralsToNextTier = tierDetails.referralsNeeded - actualReferralCount;
+            progress = Math.min(100, Math.max(0, (actualReferralCount / tierDetails.referralsNeeded) * 100));
             
             // Calculate target score for next tier
             const nextTierDetails = getTierDetails(tierDetails.nextTier);
@@ -140,13 +166,13 @@ export async function GET(req: NextRequest) {
             targetScore = nextTierBoost + (tierDetails.referralsNeeded * 2);
         } else {
             progress = 100; // Platinum is max tier
-            targetScore = user.priorityScore; // Already at max
+            targetScore = actualPriorityScore; // Already at max
         }
 
         // Get leaderboard position (rank by priorityScore DESC - higher is better)
         const rank = await EarlyAccess.countDocuments({
             userType: user.userType,
-            priorityScore: { $gt: user.priorityScore }
+            priorityScore: { $gt: actualPriorityScore }
         }) + 1;
 
         // Get total users of same type
@@ -155,8 +181,8 @@ export async function GET(req: NextRequest) {
         // Calculate spots moved up (positive number means moved up)
         const spotsMoved = Math.max(0, user.originalPosition - rank);
 
-        // Calculate launch reward based on tier (not position)
-        const launchReward = calculateLaunchReward(user.tier, user.referralCount);
+        // Calculate launch reward based on actual tier (not position)
+        const launchReward = calculateLaunchReward(actualTier, actualReferralCount);
 
         return NextResponse.json({
             success: true,
@@ -164,10 +190,10 @@ export async function GET(req: NextRequest) {
                 referralCode: user.referralCode,
                 email: user.email,
                 userType: user.userType,
-                referralCount: user.referralCount,
-                tier: user.tier,
+                referralCount: actualReferralCount,
+                tier: actualTier,
                 tierDetails,
-                priorityScore: user.priorityScore,
+                priorityScore: actualPriorityScore,
                 targetScore,
                 originalPosition: user.originalPosition,
                 currentRank: rank,
