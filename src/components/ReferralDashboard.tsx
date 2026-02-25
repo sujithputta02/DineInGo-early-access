@@ -315,7 +315,7 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-sm text-premium-black/40">Priority Boost</span>
                                                     <span className="font-bold text-emerald-600">
-                                                        -{stats.originalPosition - stats.currentRank} spots
+                                                        +{stats.spotsMoved} spots
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between items-center">

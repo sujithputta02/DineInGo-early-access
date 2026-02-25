@@ -94,16 +94,16 @@ export async function GET(req: NextRequest) {
             progress = 100; // Platinum is max tier
         }
 
-        // Get leaderboard position (rank by priorityScore)
+        // Get leaderboard position (rank by priorityScore DESC - higher is better)
         const rank = await EarlyAccess.countDocuments({
             userType: user.userType,
-            priorityScore: { $lt: user.priorityScore }
+            priorityScore: { $gt: user.priorityScore }
         }) + 1;
 
         // Get total users of same type
         const totalUsers = await EarlyAccess.countDocuments({ userType: user.userType });
 
-        // Calculate spots moved up
+        // Calculate spots moved up (positive number means moved up)
         const spotsMoved = Math.max(0, user.originalPosition - rank);
 
         return NextResponse.json({
