@@ -28,6 +28,7 @@ interface StatsData {
     tier: string;
     tierDetails: TierData;
     priorityScore: number;
+    targetScore: number;
     originalPosition: number;
     currentRank: number;
     totalUsers: number;
@@ -36,6 +37,11 @@ interface StatsData {
     referralsToNextTier: number;
     lastReferralAt: string | null;
     joinedAt: string;
+    launchReward: {
+        discount: number;
+        description: string;
+        badge: string;
+    };
 }
 
 const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, referralCode }) => {
@@ -295,6 +301,36 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                             </div>
                                         </motion.div>
 
+                                        {/* Launch Reward Card */}
+                                        <motion.div
+                                            initial={{ y: 20, opacity: 0 }}
+                                            animate={{ y: 0, opacity: 1 }}
+                                            transition={{ delay: 0.25 }}
+                                            className="bg-gradient-to-br from-purple-500 via-pink-500 to-rose-500 p-6 rounded-[24px] shadow-lg space-y-4 relative overflow-hidden"
+                                        >
+                                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+                                            <div className="relative z-10">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center">
+                                                        <Sparkles className="w-6 h-6 text-white" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-xs font-black uppercase tracking-widest text-white/80">Launch Reward</p>
+                                                        <h4 className="text-3xl font-black text-white">{stats.launchReward.discount}% OFF</h4>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2 mt-4">
+                                                    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-3">
+                                                        <p className="text-white/90 text-xs font-bold mb-1">{stats.launchReward.badge}</p>
+                                                        <p className="text-white text-sm font-medium">{stats.launchReward.description}</p>
+                                                    </div>
+                                                    <p className="text-white/70 text-xs font-medium">
+                                                        Your discount when DineInGo launches! 🎉
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </motion.div>
+
                                         {/* Referrals Card */}
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
@@ -313,14 +349,22 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                             </div>
                                             <div className="space-y-2">
                                                 <div className="flex justify-between items-center">
-                                                    <span className="text-sm text-premium-black/40">Priority Boost</span>
+                                                    <span className="text-sm text-premium-black/40">Priority Score</span>
                                                     <span className="font-bold text-emerald-600">
-                                                        +{stats.spotsMoved} spots
+                                                        {stats.priorityScore} pts
                                                     </span>
                                                 </div>
+                                                {stats.tier !== 'platinum' && (
+                                                    <div className="flex justify-between items-center">
+                                                        <span className="text-sm text-premium-black/40">Target ({stats.tierDetails.nextTier})</span>
+                                                        <span className="font-bold text-gold">
+                                                            {stats.targetScore} pts
+                                                        </span>
+                                                    </div>
+                                                )}
                                                 <div className="flex justify-between items-center">
                                                     <span className="text-sm text-premium-black/40">Last Referral</span>
-                                                    <span className="font-bold text-premium-black">
+                                                    <span className="font-bold text-premium-black text-xs">
                                                         {stats.lastReferralAt 
                                                             ? new Date(stats.lastReferralAt).toLocaleDateString('en-US', {
                                                                 month: 'short',
@@ -340,7 +384,7 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                         <motion.div
                                             initial={{ y: 20, opacity: 0 }}
                                             animate={{ y: 0, opacity: 1 }}
-                                            transition={{ delay: 0.4 }}
+                                            transition={{ delay: 0.35 }}
                                             className="bg-gradient-to-br from-emerald-500 to-teal-400 p-6 rounded-[24px] shadow-lg space-y-4"
                                         >
                                             <div className="flex items-center gap-3">
@@ -382,7 +426,7 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                     <motion.div
                                         initial={{ y: 20, opacity: 0 }}
                                         animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.5 }}
+                                        transition={{ delay: 0.4 }}
                                         className="bg-premium-black/5 rounded-[32px] p-8 space-y-6"
                                     >
                                         <div className="flex items-center gap-3">
@@ -391,10 +435,10 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                                             {[
-                                                { tier: 'Bronze', refs: '1-4', boost: '+10 spots', color: 'border-orange-200', emoji: '🥉' },
-                                                { tier: 'Silver', refs: '5-9', boost: '+25 spots', color: 'border-gray-200', emoji: '🥈' },
-                                                { tier: 'Gold', refs: '10-19', boost: '+50 spots', color: 'border-yellow-200', emoji: '🥇' },
-                                                { tier: 'Platinum', refs: '20+', boost: '+100 spots', color: 'border-gray-300', emoji: '💎' },
+                                                { tier: 'Bronze', refs: '1-4', boost: '+10 spots', discount: '5% OFF', color: 'border-orange-200', emoji: '🥉' },
+                                                { tier: 'Silver', refs: '5-9', boost: '+25 spots', discount: '10% OFF', color: 'border-gray-200', emoji: '🥈' },
+                                                { tier: 'Gold', refs: '10-19', boost: '+50 spots', discount: '15% OFF', color: 'border-yellow-200', emoji: '🥇' },
+                                                { tier: 'Platinum', refs: '20+', boost: '+100 spots', discount: '20% OFF', color: 'border-gray-300', emoji: '💎' },
                                             ].map((tierInfo, i) => (
                                                 <div key={i} className={`p-4 rounded-2xl border-2 ${tierInfo.color} ${stats.tier.toLowerCase() === tierInfo.tier.toLowerCase() ? 'bg-white shadow-lg' : 'bg-white/50'}`}>
                                                     <div className="flex items-center justify-between mb-2">
@@ -406,6 +450,7 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                                     <h4 className="font-black text-premium-black">{tierInfo.tier}</h4>
                                                     <p className="text-xs text-premium-black/40 font-medium">{tierInfo.refs} referrals</p>
                                                     <p className="text-sm font-bold text-emerald-600 mt-2">{tierInfo.boost}</p>
+                                                    <p className="text-xs font-bold text-purple-600 mt-1">{tierInfo.discount} launch</p>
                                                 </div>
                                             ))}
                                         </div>
@@ -415,7 +460,7 @@ const ReferralDashboard: React.FC<ReferralDashboardProps> = ({ isOpen, onClose, 
                                     <motion.div
                                         initial={{ y: 20, opacity: 0 }}
                                         animate={{ y: 0, opacity: 1 }}
-                                        transition={{ delay: 0.6 }}
+                                        transition={{ delay: 0.5 }}
                                         className="text-center space-y-4"
                                     >
                                         <p className="text-premium-black/50 font-medium">

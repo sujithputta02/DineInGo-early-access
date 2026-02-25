@@ -10,6 +10,48 @@ function calculateTier(referralCount: number): 'bronze' | 'silver' | 'gold' | 'p
     return 'bronze';
 }
 
+// Calculate launch reward based on tier (not position - to avoid business losses)
+function calculateLaunchReward(tier: string, referralCount: number): { discount: number; description: string; badge: string } {
+    switch (tier) {
+        case 'platinum':
+            return { 
+                discount: 20, 
+                description: '20% OFF your first booking', 
+                badge: '💎 Platinum Founder' 
+            };
+        case 'gold':
+            return { 
+                discount: 15, 
+                description: '15% OFF your first booking', 
+                badge: '🥇 Gold Founder' 
+            };
+        case 'silver':
+            return { 
+                discount: 10, 
+                description: '10% OFF your first booking', 
+                badge: '🥈 Silver Founder' 
+            };
+        case 'bronze':
+        default:
+            return { 
+                discount: 5, 
+                description: '5% OFF your first booking', 
+                badge: '🥉 Bronze Founder' 
+            };
+    }
+}
+
+// Calculate tier boost points
+function getTierBoost(tier: string): number {
+    switch (tier) {
+        case 'platinum': return 100;
+        case 'gold': return 50;
+        case 'silver': return 25;
+        case 'bronze': return 10;
+        default: return 0;
+    }
+}
+
 // Get tier details
 function getTierDetails(tier: string) {
     switch (tier) {
@@ -86,12 +128,19 @@ export async function GET(req: NextRequest) {
         // Calculate progress to next tier
         let progress = 0;
         let referralsToNextTier = 0;
+        let targetScore = 0; // Score needed to reach next tier
         
         if (tierDetails.nextTier) {
             referralsToNextTier = tierDetails.referralsNeeded - user.referralCount;
             progress = Math.min(100, Math.max(0, (user.referralCount / tierDetails.referralsNeeded) * 100));
+            
+            // Calculate target score for next tier
+            const nextTierDetails = getTierDetails(tierDetails.nextTier);
+            const nextTierBoost = getTierBoost(tierDetails.nextTier);
+            targetScore = nextTierBoost + (tierDetails.referralsNeeded * 2);
         } else {
             progress = 100; // Platinum is max tier
+            targetScore = user.priorityScore; // Already at max
         }
 
         // Get leaderboard position (rank by priorityScore DESC - higher is better)
@@ -106,6 +155,9 @@ export async function GET(req: NextRequest) {
         // Calculate spots moved up (positive number means moved up)
         const spotsMoved = Math.max(0, user.originalPosition - rank);
 
+        // Calculate launch reward based on tier (not position)
+        const launchReward = calculateLaunchReward(user.tier, user.referralCount);
+
         return NextResponse.json({
             success: true,
             data: {
@@ -116,6 +168,7 @@ export async function GET(req: NextRequest) {
                 tier: user.tier,
                 tierDetails,
                 priorityScore: user.priorityScore,
+                targetScore,
                 originalPosition: user.originalPosition,
                 currentRank: rank,
                 totalUsers,
@@ -123,7 +176,8 @@ export async function GET(req: NextRequest) {
                 progress,
                 referralsToNextTier,
                 lastReferralAt: user.lastReferralAt,
-                joinedAt: user.joinedAt
+                joinedAt: user.joinedAt,
+                launchReward
             }
         });
 
