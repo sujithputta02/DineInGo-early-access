@@ -747,11 +747,15 @@ export default function Home() {
             <h3 className="text-3xl font-black text-premium-black">DineInGo<span className="text-gold">.</span></h3>
             <p className="text-premium-black/40 max-w-sm text-lg font-medium">The zero-friction ecosystem for restaurants, concerts, festivals & outdoor events — all in one platform.</p>
             <div className="flex items-center gap-6">
-              {[Instagram, Twitter, Linkedin].map((Icon, i) => (
-                <button key={i} className="w-12 h-12 rounded-full bg-premium-black/5 flex items-center justify-center hover:bg-[#00F29D] hover:text-white transition-all duration-300">
-                  <Icon className="w-5 h-5" />
-                </button>
-              ))}
+              <a href="https://www.instagram.com/dineingo.web/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-premium-black/5 flex items-center justify-center hover:bg-[#00F29D] hover:text-white transition-all duration-300">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <button className="w-12 h-12 rounded-full bg-premium-black/5 flex items-center justify-center hover:bg-[#00F29D] hover:text-white transition-all duration-300">
+                <Twitter className="w-5 h-5" />
+              </button>
+              <button className="w-12 h-12 rounded-full bg-premium-black/5 flex items-center justify-center hover:bg-[#00F29D] hover:text-white transition-all duration-300">
+                <Linkedin className="w-5 h-5" />
+              </button>
             </div>
           </div>
           <div className="grid grid-cols-2 md:col-span-2 gap-12">
