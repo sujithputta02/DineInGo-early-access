@@ -308,11 +308,11 @@ export default function Home() {
                   <span
                     className="absolute bg-red-500 rounded-full"
                     style={{
-                      top: "0.1em",
+                      top: "0.06em",
                       left: "44.5%",
                       transform: "translateX(-50%)",
-                      width: "0.20em",
-                      height: "0.20em",
+                      width: "0.26em",
+                      height: "0.26em",
                       boxShadow: "0 0 15px rgba(255, 0, 0, 0.2)"
                     }}
                   />
