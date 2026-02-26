@@ -447,10 +447,10 @@ export default function Home() {
 
               <div className="grid sm:grid-cols-2 gap-8">
                 {[
-                  { icon: Star, title: "Elite Status", desc: "Exclusive 'First 5,000' digital badge on your profile.", color: "gold" },
-                  { icon: Zap, title: "Zero Fees", desc: "One full year of premium service with zero booking fees.", color: "emerald" },
-                  { icon: ShieldCheck, title: "V1.0 Access", desc: "Immediate beta access to all new feature rollouts.", color: "teal" },
-                  { icon: Users, title: "Founder's Circle", desc: "Direct feedback line to our engineering team.", color: "gold" }
+                  { icon: Star, title: "Elite Status", desc: "Exclusive 'First 5,000' badge on your profile forever", color: "gold" },
+                  { icon: Zap, title: "Zero Fees", desc: "Never pay booking fees on any reservation", color: "emerald" },
+                  { icon: ShieldCheck, title: "V1.0 Access", desc: "Get immediate access to all new features as we build them", color: "teal" },
+                  { icon: Users, title: "Founder's Circle", desc: "Direct feedback line to our founding team", color: "gold" }
                 ].map((perk, i) => (
                   <div key={i} className="space-y-4">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${perk.color === 'gold' ? 'bg-gold/10 text-gold' : perk.color === 'emerald' ? 'bg-emerald-50 text-emerald-500' : 'bg-teal-50 text-teal-600'}`}>
@@ -481,15 +481,15 @@ export default function Home() {
                 <div className="space-y-6 pt-10">
                   <div className="flex justify-between items-end border-b border-white/10 pb-4">
                     <span className="text-white/30 font-bold uppercase tracking-widest text-xs">Benefit #1</span>
-                    <span className="text-white font-bold">12 Months Premium</span>
+                    <span className="text-white font-bold">Founding Member Badge</span>
                   </div>
                   <div className="flex justify-between items-end border-b border-white/10 pb-4">
                     <span className="text-white/30 font-bold uppercase tracking-widest text-xs">Benefit #2</span>
-                    <span className="text-white font-bold">Priority Support</span>
+                    <span className="text-white font-bold">Zero Booking Fees</span>
                   </div>
                   <div className="flex justify-between items-end border-b border-white/10 pb-4">
                     <span className="text-white/30 font-bold uppercase tracking-widest text-xs">Benefit #3</span>
-                    <span className="text-white font-bold">V1. Beta Access</span>
+                    <span className="text-white font-bold">Beta Access First</span>
                   </div>
                 </div>
 
