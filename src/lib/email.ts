@@ -5,14 +5,13 @@ import nodemailer from 'nodemailer';
  * Strategy: Try Brevo first for best deliverability, fallback to Gmail SMTP if it fails
  */
 export async function sendEmail(to: string, subject: string, html: string): Promise<void> {
-    // Try Brevo first (primary method - best deliverability)
     const brevoApiKey = process.env.BREVO_API_KEY;
     
-    if (brevoApiKey) {
+    // PRIORITY 1: Brevo (High Deliverability REST API)
+    if (brevoApiKey && brevoApiKey.startsWith('xkeysib')) {
         try {
-            console.log('📧 Attempting to send via Brevo...');
+            console.log(`📧 [V1] Attempting Brevo REST API for: ${to}`);
             
-            // Use Brevo's REST API directly (no package needed)
             const response = await fetch('https://api.brevo.com/v3/smtp/email', {
                 method: 'POST',
                 headers: {
@@ -31,36 +30,32 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
                 }),
             });
 
-            if (!response.ok) {
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ [V1] Brevo Success:', { messageId: data.messageId });
+                return; // Primary success
+            } else {
                 const error = await response.json();
-                throw new Error(`Brevo API error: ${JSON.stringify(error)}`);
+                console.warn('⚠️ [V1] Brevo Limit or API Error:', error);
+                // Fall through to Priority 2
             }
-
-            const data = await response.json();
-            console.log('✅ Email sent via Brevo:', {
-                messageId: data.messageId,
-                to
-            });
-            return; // Success! Exit function
         } catch (brevoError: any) {
-            console.error('❌ Brevo failed, trying Gmail SMTP fallback...', {
-                message: brevoError?.message,
-                name: brevoError?.name
-            });
-            // Continue to fallback
+            console.error('❌ [V1] Brevo Connection Failed:', brevoError?.message || 'Unknown network error');
+            // Fall through to Priority 2
         }
     } else {
-        console.log('⚠️ No Brevo API key, using Gmail SMTP...');
+        console.log('ℹ️ Brevo API Key missing or invalid - Skipping to Priority 2 (Gmail)');
     }
 
-    // Fallback to Gmail SMTP
+    // PRIORITY 2: Gmail SMTP Fallback
+    console.log(`📧 [V2] Attempting Gmail SMTP Fallback for: ${to}`);
+    
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
-        throw new Error('Both Brevo and Gmail SMTP failed - no Gmail credentials configured');
+        console.error('❌ CRITICAL: No Gmail credentials for fallback. Email aborted.');
+        throw new Error('All email providers failed or unconfigured.');
     }
 
     try {
-        console.log('📧 Attempting to send via Gmail SMTP...');
-        
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST || 'smtp.gmail.com',
             port: Number(process.env.EMAIL_PORT) || 587,
@@ -73,15 +68,11 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
                 rejectUnauthorized: true,
                 minVersion: 'TLSv1.2'
             },
+            // Performance optimizations for high-volume fallbacks
             pool: true,
-            maxConnections: 5,
-            maxMessages: 100,
-            rateDelta: 1000,
-            rateLimit: 5,
+            maxConnections: 3,
+            maxMessages: 50,
         });
-
-        await transporter.verify();
-        console.log('✅ Gmail SMTP connection verified');
 
         const info = await transporter.sendMail({
             from: process.env.EMAIL_FROM || '"DineInGo 🦖" <sec.dinelngo.team@gmail.com>',
@@ -89,24 +80,18 @@ export async function sendEmail(to: string, subject: string, html: string): Prom
             subject,
             html,
             headers: {
-                'X-Priority': '3',
-                'X-Mailer': 'DineInGo Early Access',
-                'Importance': 'normal',
+                'X-Priority': '1', // High priority for fallback
+                'X-Mailer': 'DineInGo Early Access v1.1',
             },
             text: html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim(),
         });
 
-        console.log('✅ Email sent via Gmail SMTP:', {
-            messageId: info.messageId,
-            accepted: info.accepted,
-            rejected: info.rejected
-        });
+        console.log('✅ [V2] Gmail SMTP Success:', { messageId: info.messageId });
     } catch (smtpError: any) {
-        console.error('❌ Gmail SMTP also failed:', {
+        console.error('❌ [V2] Gmail SMTP Final Failure:', {
             message: smtpError?.message,
-            code: smtpError?.code,
-            response: smtpError?.response
+            code: smtpError?.code
         });
-        throw new Error('Both Brevo and Gmail SMTP failed to send email');
+        throw new Error('CRITICAL: Both primary (Brevo) and secondary (Gmail) systems failed.');
     }
 }
