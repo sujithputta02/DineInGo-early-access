@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dine-in-go-early-access.vercel.app/sitemap.xml

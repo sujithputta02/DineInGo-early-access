@@ -10,8 +10,28 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  title: "DineInGo - Early Access",
-  description: "Join the DineInGo early access list. The AI-powered dining platform for foodies and venues.",
+  metadataBase: new URL("https://dine-in-go-early-access.vercel.app"),
+  title: "DineInGo - Early Access | The AI-Powered Dining Future",
+  description: "Join the DineInGo early access list. India's first AI-powered dining platform for foodies and venues. Reserve exact tables with real-time floor plans.",
+  keywords: "DineInGo early access, AI dining platform India, restaurant reservation early access, future of dining, book exact table, real-time floor plan waitlist",
+  verification: {
+    google: "4af774835e4eaf41",
+  },
+  openGraph: {
+    title: "DineInGo - Early Access",
+    description: "Join the future of dining. India's first AI-powered interactive reservation platform.",
+    url: "https://dine-in-go-early-access.vercel.app",
+    siteName: "DineInGo Early Access",
+    images: [
+      {
+        url: "/icon.png", // Using existing icon for preview
+        width: 1188,
+        height: 1188,
+      },
+    ],
+    locale: "en_IN",
+    type: "website",
+  },
   icons: {
     icon: [
       { url: '/icon.png', type: 'image/png', sizes: '1188x1188' },
