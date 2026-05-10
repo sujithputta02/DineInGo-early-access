@@ -123,7 +123,7 @@ npm run build
 vercel logs
 
 # Check MongoDB
-mongosh "mongodb+srv://cluster.mongodb.net/database" --username your_username
+mongosh "mongodb+srv://HOST/DATABASE" --username USERNAME
 ```
 
 ## Support Contacts

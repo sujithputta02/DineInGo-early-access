@@ -88,7 +88,7 @@ After deployment, add environment variables:
 
 ```
 MONGODB_URI
-Value: mongodb+srv://your_username:your_password@cluster.mongodb.net/database
+Value: mongodb+srv://USERNAME:PASSWORD@HOST/DATABASE
 
 NEXT_PUBLIC_BASE_URL
 Value: https://your-project-name.vercel.app (use your actual Vercel URL)

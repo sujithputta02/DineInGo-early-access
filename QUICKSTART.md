@@ -29,7 +29,7 @@ Add these 7 variables:
 
 | Variable | Value |
 |----------|-------|
-| `MONGODB_URI` | `mongodb+srv://your_username:your_password@cluster.mongodb.net/database` |
+| `MONGODB_URI` | `mongodb+srv://USERNAME:PASSWORD@HOST/DATABASE` |
 | `NEXT_PUBLIC_BASE_URL` | `https://your-project.vercel.app` (copy from Vercel) |
 | `EMAIL_HOST` | `smtp.gmail.com` |
 | `EMAIL_PORT` | `587` |
