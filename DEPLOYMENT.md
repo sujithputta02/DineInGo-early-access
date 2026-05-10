@@ -88,7 +88,7 @@ After deployment, add environment variables:
 
 ```
 MONGODB_URI
-Value: mongodb+srv://dineingoapp:FzyC357xJaxj6oXM@cluster0dine.sofa1gx.mongodb.net/dineingoapp?retryWrites=true&w=majority&appName=Cluster0dine
+Value: mongodb+srv://your_username:your_password@cluster.mongodb.net/database
 
 NEXT_PUBLIC_BASE_URL
 Value: https://your-project-name.vercel.app (use your actual Vercel URL)
@@ -103,7 +103,7 @@ EMAIL_USER
 Value: sec.dinelngo.team@gmail.com
 
 EMAIL_PASS
-Value: finkqeuvzkpbgqfy
+Value: <your-app-password>
 
 EMAIL_FROM
 Value: "DineInGo 🦖 <sec.dinelngo.team@gmail.com>"

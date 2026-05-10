@@ -29,12 +29,12 @@ Add these 7 variables:
 
 | Variable | Value |
 |----------|-------|
-| `MONGODB_URI` | `mongodb+srv://dineingoapp:FzyC357xJaxj6oXM@cluster0dine.sofa1gx.mongodb.net/dineingoapp?retryWrites=true&w=majority&appName=Cluster0dine` |
+| `MONGODB_URI` | `mongodb+srv://your_username:your_password@cluster.mongodb.net/database` |
 | `NEXT_PUBLIC_BASE_URL` | `https://your-project.vercel.app` (copy from Vercel) |
 | `EMAIL_HOST` | `smtp.gmail.com` |
 | `EMAIL_PORT` | `587` |
 | `EMAIL_USER` | `sec.dinelngo.team@gmail.com` |
-| `EMAIL_PASS` | `finkqeuvzkpbgqfy` |
+| `EMAIL_PASS` | `<your-app-password>` |
 | `EMAIL_FROM` | `"DineInGo 🦖 <sec.dinelngo.team@gmail.com>"` |
 
 ## 4. Redeploy (30 seconds)
